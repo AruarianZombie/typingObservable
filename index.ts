@@ -33,36 +33,27 @@ const test$: Observable<any> = typing$.pipe(
     expression = new RegExp(`${text}.*`, 'i');
     console.log(expression);
   }),
-  /*switchMap((text: string) => {
-    const expression: RegExp = new RegExp(`${text}.*`, 'i');
-    return gothamCharacters$.pipe(
-      map((items: Array<string>) => {
-        return items.filter(i => expression.test(i))
-      })
-    )
-  }),*/
-  /*switchMap((text: string) => {
-    return timeoutWith(3000, gothamCharacters$.pipe(
-      timeoutWith
-      map((items: Array<string>) => {
-        return items.filter(i => expression.test(i))
-      })
-    ))
-  }),*/
+  repeatWhen(() => typing$),
   timeoutWith(3000, gothamCharacters$.pipe(
     map((items: Array<string>) => {
+      console.log('gotham ')
       return items.filter(i => expression.test(i))
-    })
+    }),
   )),
   repeatWhen(() => typing$),
-  skip(1)
+  skip(1),
+  tap((x) => {
+    console.log('algo esta regresando test$');
+    console.log(x);
+  }),
+  filter((x) => Array.isArray(x))
 )
 
-typing$.subscribe({
+/*typing$.subscribe({
   next: (search: string) => {
     console.log(`User is typing ${search}`)
   }
-});
+});*/
 
 test$.subscribe({
   next: (items: Array<string>) => {
